@@ -199,7 +199,8 @@ OUT;
 		<li class='browse active'><a href='#'>{$l->browse}</a></li>
 OUT;
 
-if ($page->editable() && !$page->is(Page::statusLocked)) {
+// **** alex mod - added condition that page edit is available only to the creator of page being viewed or superuser ****
+if ($page->editable() && !$page->is(Page::statusLocked) && $page->createdUser == $this->user | $this->user->isSuperuser()) {
 	$out .= "<li class='edit'><a href='{$this->config->urls->admin}page/edit/?id={$this->page->id}{$modalGet}' class='{$modalClass} edit'>{$l->edit}</a></li>";
 } else {
 	if (!$page->editable()) {
@@ -213,8 +214,12 @@ if ($page->addable()) {
 	$out .= "<li class='add-page'><a href='{$this->config->urls->admin}page/add/?parent_id={$this->page->id}{$modalGet}' class='{$modalClass} add'>{$l->new} {$templateTitle}</a></li>";
 }
 
+// **** alex mod - Removed admin button to restrict access to backend admin ****
+// <a href='{$this->config->urls->admin}page/?open={$this->page->id}' class='pages'>{$l->admin}</a>
 $out .= <<<OUT
-		<li class='admin'><a href='{$this->config->urls->admin}login/logout/'>{$l->logout}</a> <a href='{$this->config->urls->admin}page/?open={$this->page->id}' class='pages'>{$l->admin}</a></li>
+		<li class='admin'>
+			<a href='{$this->config->urls->admin}login/logout/'>{$l->logout}</a> 
+		</li>
 	</ul>
 OUT;
 
